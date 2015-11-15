@@ -13,6 +13,12 @@
             <artifactId>mongodb-driver</artifactId>
             <version>3.0.4</version>
         </dependency>
+        <dependency>
+            <groupId>com.fasterxml.uuid</groupId>
+            <artifactId>java-uuid-generator</artifactId>
+            <version>3.1.3</version>
+        </dependency>
+
     </dependencies>
 
 </project>
