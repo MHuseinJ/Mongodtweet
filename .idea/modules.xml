@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/Mongodtweet.iml" filepath="$PROJECT_DIR$/Mongodtweet.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Mongotweet.iml" filepath="$PROJECT_DIR$/Mongotweet.iml" />
     </modules>
   </component>
 </project>
