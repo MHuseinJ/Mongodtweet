@@ -73,11 +73,11 @@ public class TweetMain {
 
                 }else if ((query = CommandRegexes.EXIT.match(inputs)) != null){
                     System.out.print("Bye....... ");
-                    break;}
+                    break;
 //                }else if ((query = CommandRegexes.TIMELINE.match(inputs)) != null){
 //                    mongo_engine.show_timeline(UserName);
-//                }else if ((query = CommandRegexes.TWEET.match(inputs)) != null){
-//                    mongo_engine.tweet(UserName,query[0]);
+                }else if ((query = CommandRegexes.TWEET.match(inputs)) != null){
+                    mongo_engine.tweet(UserName,query[0]);}
 //                }else if ((query = CommandRegexes.MYTWEET.match(inputs)) != null){
 //                    mongo_engine.show_userline(UserName);
 //               }

@@ -4,10 +4,13 @@
  * and open the template in the editor.
  */
 
+import com.fasterxml.uuid.Generators;
+import com.fasterxml.uuid.impl.TimeBasedGenerator;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import org.bson.Document;
+import org.bson.UuidRepresentation;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
@@ -87,16 +90,16 @@ public class Mongo_Engine {
         User.insertOne(AnUser);
     }
     public void input_follower(String username, String follower, Date sejak) {
-        Document Anfollower = new Document("username", username)
+        Document Afollower = new Document("username", username)
                 .append("follower", follower)
                 .append("since", sejak);
-        Followers.insertOne(Anfollower);
+        Followers.insertOne(Afollower);
     }
     public void input_friend(String username, String friend, Date sejak) {
-        Document AnFriend =  new Document("username", username)
+        Document AFriend =  new Document("username", username)
                 .append("friend", friend)
                 .append("since", sejak);
-        Friends.insertOne(AnFriend);
+        Friends.insertOne(AFriend);
     }
 
     public boolean follow(String target, String sumber) {
@@ -121,43 +124,46 @@ public class Mongo_Engine {
         }
     }
 
-//    public void tweet(String username, String tweet) {
-//        try {
-//            UUID tweet_id = UUIDs.random();
-//            UUID time_uuid = UUIDs.timeBased();
-//            String follower;
-//            ResultSet result = session.execute("INSERT INTO tweets (tweet_id,username,body) VALUES(" + tweet_id + ",'" + username + "','" + tweet + "')");
-//            insert_to_userline(tweet_id, username, time_uuid);
-//            insert_to_timeline(tweet_id, username, time_uuid);
-//            ResultSet result2 = session.execute("SELECT * from followers WHERE username='" + username + "'");
-//            for (Row row : result2) {
-//                follower = row.getString("follower");
-//                insert_to_timeline(tweet_id, follower, time_uuid);
-//            }
-//            System.out.println("Tweeted!");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//    }
-//
-//    public void insert_to_userline(UUID tweet_id, String username, UUID time_uuid) {
-//        try {
-//            //System.out.println("INSERT INTO userline (username,time,tweet_id) VALUES('" + username + "', "+time_uuid+", '" + tweet_id + "')");
-//            ResultSet result = session.execute("INSERT INTO userline (username,time,tweet_id) VALUES('" + username + "', "+time_uuid+", " + tweet_id + ")");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    public void insert_to_timeline(UUID tweet_id, String username, UUID  time_uuid) {
-//        try {
-//            //System.out.println("INSERT INTO timeline (username,time,tweet_id) VALUES('" + username + "', "+time_uuid+", '" + tweet_id + "')");
-//            ResultSet result = session.execute("INSERT INTO timeline (username,time,tweet_id) VALUES('" + username + "', "+time_uuid+", " + tweet_id + ")");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
+    public void tweet(String username, String tweet) {
+        try {
+            UUID tweet_id = UUID.randomUUID();
+            TimeBasedGenerator uuidGenerator = Generators.timeBasedGenerator();
+            UUID time_uuid = uuidGenerator.generate();
+            String follower;
+            add_tweet(tweet_id,username,tweet);
+            insert_to_userline(tweet_id, username, time_uuid);
+            insert_to_timeline(tweet_id, username, time_uuid);
+            for (Document cur : Followers.find(eq("username",username))) {
+                follower = cur.get("follower").toString();
+                insert_to_timeline(tweet_id, follower, time_uuid);
+            }
+            System.out.println("Tweeted!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void insert_to_userline(UUID tweet_id, String username, UUID time_uuid) {
+        Document Uline = new Document("username", username)
+            .append("time", time_uuid)
+            .append("tweet_id", tweet_id);
+        Userline.insertOne(Uline);
+    }
+
+    public void insert_to_timeline(UUID tweet_id, String username, UUID  time_uuid) {
+        Document Tline = new Document("username", username)
+              .append("time", time_uuid)
+              .append("tweet_id", tweet_id);
+        Timeline.insertOne(Tline);
+    }
+
+    public void add_tweet(UUID tweet_id, String username, String Body) {
+        Document ATweet = new Document("tweet_id", tweet_id)
+                .append("username", username)
+                .append("body", Body);
+        Tweets.insertOne(ATweet);
+    }
 //
 //    public void show_tweet(String username) {
 //        try {
