@@ -23,7 +23,7 @@ public class MongoDBJDBC {
 
             // To connect to mongodb server
             MongoClient mongoClient = new MongoClient( "167.205.35.19" , 27017 );
-
+            Mongo_Engine mongo_engine = new Mongo_Engine("167.205.35.19", "husain");
             // Now connect to your databases
             //DB db = mongoClient.getDB( "husain" );
             MongoDatabase database = mongoClient.getDatabase("husain");

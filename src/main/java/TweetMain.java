@@ -15,10 +15,16 @@ public class TweetMain {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
+        Mongo_Engine mongo_engine = new Mongo_Engine("167.205.35.19", "husain");
+
         MongoClient mongoClient = new MongoClient( "167.205.35.19" , 27017 );
         MongoDatabase database = mongoClient.getDatabase("husain");
         MongoCollection<Document> User = database.getCollection("user");
-
+        MongoCollection<Document> Followers = database.getCollection("followers");
+        MongoCollection<Document> Friends = database.getCollection("friends");
+        MongoCollection<Document> Timeline = database.getCollection("timeline");
+        MongoCollection<Document> Userline = database.getCollection("userline");
+        MongoCollection<Document> Tweets = database.getCollection("tweets");
 
 
         System.out.println("Selamat datang di Tweet Mongo");
@@ -34,9 +40,8 @@ public class TweetMain {
                 String username = input.nextLine();
                 System.out.print("Password: ");
                 String password = input.nextLine();
-                Document myUsername = User.find(eq("username", username)).first();
-                if (myUsername != null) {
-                    if (myUsername.get("password").toString().equals(password)){
+                if (mongo_engine.is_user_exist(username)) {
+                    if (mongo_engine.check_password(username,password)){
                         UserName = username;
                         ins = 0;
                     } else {
@@ -45,9 +50,7 @@ public class TweetMain {
                     }
                 } else {
                     System.out.println("User Belum Ada, dan akan di registrasi");
-                    Document AnUser = new Document("username", username)
-                            .append("password", password);
-                    User.insertOne(AnUser);
+                    mongo_engine.register_user(username,password);
                     ins = 1;
                 }
             }else{
@@ -59,29 +62,28 @@ public class TweetMain {
         }
         if (UserName != null){
             System.out.println("Selamat Datang di Twitsanda " + UserName);
-//            System.out.println("");
-//            System.out.print("Query: ");
-//            String inputs = input.nextLine();
-//            String[] query;
-//            while (true){
-//                if ((query = CommandRegexes.follow.match(inputs)) != null){
-//                    if(twissandra_engine.follow(query[0],UserName))
-//                        System.out.println("Anda Berhasil Mengikuti "+query[0]);
-//                    else
-//                        System.out.println("Anda Gagal Mengikuti "+query[0]);
-//                }else if ((query = CommandRegexes.EXIT.match(inputs)) != null){
-//                    System.out.print("Bye....... ");
-//                    break;
+            System.out.println("");
+            System.out.print("Query: ");
+            String inputs = input.nextLine();
+            String[] query;
+            while (true){
+                if ((query = CommandRegexes.follow.match(inputs)) != null){
+                    if(mongo_engine.follow(query[0],UserName))
+                        System.out.println("Anda Berhasil Mengikuti "+query[0]);
+
+                }else if ((query = CommandRegexes.EXIT.match(inputs)) != null){
+                    System.out.print("Bye....... ");
+                    break;}
 //                }else if ((query = CommandRegexes.TIMELINE.match(inputs)) != null){
-//                    twissandra_engine.show_timeline(UserName);
+//                    mongo_engine.show_timeline(UserName);
 //                }else if ((query = CommandRegexes.TWEET.match(inputs)) != null){
-//                    twissandra_engine.tweet(UserName,query[0]);
+//                    mongo_engine.tweet(UserName,query[0]);
 //                }else if ((query = CommandRegexes.MYTWEET.match(inputs)) != null){
-//                    twissandra_engine.show_userline(UserName);
-//                }
-//                System.out.print("Query: ");
-//                inputs = input.nextLine();
-//            }
+//                    mongo_engine.show_userline(UserName);
+//               }
+                System.out.print("Query: ");
+                inputs = input.nextLine();
+           }
         }
     }
 }
